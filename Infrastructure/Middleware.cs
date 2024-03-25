@@ -1,12 +1,9 @@
 ﻿using Cedeira.Infraestructura.Entidades;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using ServiceStack;
 
-namespace Cedeira.Infraestructura
+namespace perfect_wizard.Infrastructure
 {
     public class ResponseNormalizerMiddleware
     {

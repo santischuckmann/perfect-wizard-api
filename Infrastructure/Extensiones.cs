@@ -1,21 +1,21 @@
-﻿using Cedeira.Infraestructura.Authentication;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-namespace perfect_wizard.Infraestructure
+namespace perfect_wizard.Infrastructure
 {
     public static class Extensiones
     {
+        public static IServiceCollection AddServices(this IServiceCollection services)
+        {
+            services.AddScoped<Infrastructure.MongoDBService>();
+            services.AddScoped<Services.WizardService>();
+
+            return services;
+        }
         public static IServiceCollection AddCustomAuthentication(this IServiceCollection services, ConfigurationManager configuration)
         {
-            services.AddAuthentication(options => options.DefaultScheme = AuthenticationConstants.MultiChannelScheme)
-                .AddScheme<AuthenticationSchemeOptions, ChannelAuthenticationHandler>(AuthenticationConstants.MultiChannelScheme, options => { });
-
-            services.AddAuthentication(options => options.DefaultScheme = AuthenticationConstants.ApiKeyScheme)
-                .AddScheme<AuthenticationSchemeOptions, ApiKeyAuthenticationHandler>(AuthenticationConstants.ApiKeyScheme, apikeyOptions => { });
-
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
