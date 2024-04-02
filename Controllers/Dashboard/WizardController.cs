@@ -1,24 +1,22 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using MongoDB.Bson;
-using MongoDB.Driver;
-using perfect_wizard.Infrastructure;
+using perfect_wizard.Application;
 
 namespace perfect_wizard.Controllers.Dashboard
 {
     [Route("api/wizard")]
     public class WizardController : BaseController
     {
-        private readonly Services.WizardService _wizardService;
-        public WizardController(Services.WizardService wizardService)
+        private readonly IMediator _mediator;
+        public WizardController(IMediator mediator)
         {
-            _wizardService = wizardService;
+            _mediator = mediator;
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateWizard([FromBody] Models.Wizard wizard)
+        public async Task<IActionResult> CreateWizard([FromBody] Application.DTOs.WizardDto wizard)
         {
-            string wizardId = await _wizardService.CreateWizard(wizard);
+            string wizardId = await _mediator.Send(new Application.Commands.CreateWizardCommand() { Wizard = wizard });
 
             return Ok(wizardId);
         }
@@ -26,17 +24,17 @@ namespace perfect_wizard.Controllers.Dashboard
         [HttpGet]
         public async Task<IActionResult> GetWizards(string tenantId)
         {
-            var wizards = _wizardService.GetWizards(tenantId);
+            var result = await _mediator.Send(new Application.Queries.GetWizardsQuery() { TenantId = tenantId });
 
-            return Ok(wizards);
+            return Ok(result);
         }
 
         [HttpGet("{wizardId}")]
         public async Task<IActionResult> GetWizard(string wizardId)
         {
-            var wizard = _wizardService.GetWizards(wizardId);
+            var result = await _mediator.Send(new Application.Queries.GetWizardQuery() { WizardId = wizardId });
 
-            return Ok(wizard);
+            return Ok(result);
         }
     }
 }

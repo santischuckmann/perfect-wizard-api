@@ -6,7 +6,8 @@ using perfect_wizard.Infrastructure;
 namespace perfect_wizard.Controllers.Dashboard
 {
     [ApiController]
-    [Authorize(AuthenticationSchemes = "bearer")]
+    [GlobalHeaders("endpoint_id", "wizard")]
+    //[Authorize(AuthenticationSchemes = "bearer")]
     public class BaseController : ControllerBase
     {
         public BaseController()

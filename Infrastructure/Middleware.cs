@@ -1,7 +1,9 @@
 ﻿using Cedeira.Infraestructura.Entidades;
 using Microsoft.AspNetCore.Mvc.Filters;
+using MongoDB.Bson;
 using Newtonsoft.Json;
 using ServiceStack;
+using System.Runtime.CompilerServices;
 
 namespace perfect_wizard.Infrastructure
 {
@@ -43,10 +45,19 @@ namespace perfect_wizard.Infrastructure
 
                     ApiResponse<object> response = new ApiResponse<object>()
                     {
-                        data = JsonConvert.DeserializeObject(bodyResponse),
                         errors = errors.ToArray(),
                         meta = new Meta()
                     };
+
+                    if (bodyResponse.IsValidJson())
+                    {
+                        response.data = JsonConvert.DeserializeObject(bodyResponse);
+                    }
+                    else
+                    {
+                        response.data = bodyResponse;
+                    }
+
 
                     newBody.Seek(0, SeekOrigin.Begin);
                     StreamWriter writer = new StreamWriter(newBody);
@@ -76,6 +87,22 @@ namespace perfect_wizard.Infrastructure
             } while (ex != null);
 
             return errors;
+        }
+    }
+
+    public static class Extensions
+    {
+        public static bool IsValidJson(this string json)
+        {
+            try
+            {
+                JsonConvert.DeserializeObject(json);
+                return true;
+            }
+            catch (JsonReaderException)
+            {
+                return false;
+            }
         }
     }
 

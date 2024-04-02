@@ -10,11 +10,10 @@ namespace perfect_wizard.Infrastructure
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
             services.AddScoped<Infrastructure.MongoDBService>();
-            services.AddScoped<Services.WizardService>();
 
             return services;
         }
-        public static IServiceCollection AddCustomAuthentication(this IServiceCollection services, ConfigurationManager configuration)
+        public static IServiceCollection AddJWTAuthentication(this IServiceCollection services, ConfigurationManager configuration)
         {
             services.AddAuthentication(options =>
             {
