@@ -18,11 +18,15 @@ namespace perfect_wizard.Models
     }
     public class Field
     {
+        [BsonId]
+        [BsonRepresentation(MongoDB.Bson.BsonType.ObjectId)]
+        public string FieldId { get; set; }
         public string fieldType { get; set; }
         public string label { get; set; }
         public string placeholder { get; set; }
         public List<Option> options { get; set; }
         public string name { get; set; }
+        public string type { get; set; }
         public Description? description { get; set; }
     }
 

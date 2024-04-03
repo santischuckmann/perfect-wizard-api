@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 
 namespace perfect_wizard.Controllers
@@ -7,17 +8,26 @@ namespace perfect_wizard.Controllers
     [ApiController]
     public class ClientController: ControllerBase
     {
+        private readonly IMediator _mediator;
+        public ClientController(IMediator mediator)
+        {
+            _mediator = mediator;
+        }
+
         [HttpGet("{wizardId}")]
         public async Task<IActionResult> GetWizard(string wizardId)
         {
-            var client = new MongoClient("mongodb+srv://m001-student:44351950a@sandbox.vlsoedn.mongodb.net/?retryWrites=true&w=majority&appName=Sandbox");
-            var database = client.GetDatabase("perfect_wizard");
+            var result = await _mediator.Send(new Application.Queries.GetWizardQuery() { WizardId = wizardId });
 
-            var collection = database.GetCollection<Models.Wizard>("wizard");
-
-            Models.Wizard wizard = await collection.Find(x => x.WizardId == wizardId).FirstOrDefaultAsync();
-
-            return Ok(wizard);
+            return Ok(result);
         }
+
+        //[HttpPost]
+        //public async Task<IActionResult> SendWizard([FromBody] Application.DTOs.)
+        //{
+        //    var result = await _mediator.Send(new Application.Queries.GetWizardQuery() { WizardId = wizardId });
+
+        //    return Ok(result);
+        //}
     }
 }

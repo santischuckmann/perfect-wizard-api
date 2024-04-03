@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using perfect_wizard.Models;
 
 namespace perfect_wizard.Application.Commands
 {
