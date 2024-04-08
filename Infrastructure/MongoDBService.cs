@@ -7,6 +7,8 @@ namespace perfect_wizard.Infrastructure
     {
         public IMongoCollection<Wizard> Wizard { get; set; }
         public IMongoCollection<Response> Response { get; set; }
+        public IMongoCollection<Tenant> Tenant { get; set; }
+        public IMongoCollection<User> User { get; set; }
         public MongoDBService(IConfiguration configuration) 
         {
             var client = new MongoClient(configuration.GetConnectionString("database_server"));

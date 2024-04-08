@@ -7,6 +7,8 @@ namespace perfect_wizard.Infrastructure.Mapper
         public WizardProfile()
         {
             CreateMap<Application.DTOs.WizardDto, Models.Wizard>().ReverseMap();
+
+            CreateMap<Application.DTOs.ResponseDto, Models.Response>().ReverseMap();
         }
     }
 }

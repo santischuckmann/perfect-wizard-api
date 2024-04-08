@@ -54,23 +54,23 @@ namespace perfect_wizard.Application
 
             return wizardDtos;
         }
-        public async Task<DTOs.WizardDto> GetWizard(string wizardId)
-        {
-            Models.Wizard wizard = await _dbService.Wizard.Find(x => x.WizardId == wizardId).FirstOrDefaultAsync();
+        //public async Task<DTOs.WizardDto> GetWizard(string wizardId)
+        //{
+        //    Models.Wizard wizard = await _dbService.Wizard.Find(x => x.WizardId == wizardId).FirstOrDefaultAsync();
 
-            if (wizard is null)
-                throw new Exception($"There is no Wizard that matches the id = '{wizardId}'");
+        //    if (wizard is null)
+        //        throw new Exception($"There is no Wizard that matches the id = '{wizardId}'");
 
-            DTOs.WizardDto wizardDto = new DTOs.WizardDto()
-            {
-                Color = wizard.color, 
-                Screens = wizard.screens,
-                TenantId = wizard.tenantId,
-                Title = wizard.title,
-                WizardId = wizard.WizardId
-            };
+        //    DTOs.WizardDto wizardDto = new DTOs.WizardDto()
+        //    {
+        //        Color = wizard.color, 
+        //        Screens = wizard.screens,
+        //        TenantId = wizard.tenantId,
+        //        Title = wizard.title,
+        //        WizardId = wizard.WizardId
+        //    };
 
-            return wizardDto;
-        }
+        //    return wizardDto;
+        //}
     }
 }

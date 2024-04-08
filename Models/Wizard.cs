@@ -27,6 +27,8 @@ namespace perfect_wizard.Models
         public List<Option> options { get; set; }
         public string name { get; set; }
         public string type { get; set; }
+        public bool isIdentifier { get; set; }
+        public int minValuesRequired { get; set; }
         public Description? description { get; set; }
     }
 

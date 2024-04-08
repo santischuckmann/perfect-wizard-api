@@ -13,7 +13,7 @@ namespace perfect_wizard.Application.DTOs
     }
     public class ScreenDto
     {
-        public List<Field> Fields { get; set; }
+        public List<FieldDto> Fields { get; set; }
         public string StepName { get; set; }
     }
     public class FieldDto
@@ -25,6 +25,8 @@ namespace perfect_wizard.Application.DTOs
         public List<Option> Options { get; set; }
         public string Name { get; set; }
         public string Type { get; set; }
+        public bool IsIdentifier { get; set; }
+        public int MinValuesRequired { get; set; }
         public Description? Description { get; set; }
     }
 
