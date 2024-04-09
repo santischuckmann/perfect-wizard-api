@@ -18,16 +18,21 @@ namespace perfect_wizard.Application.Handlers.Commands
         }
         public async Task Handle(SendWizardCommand request, CancellationToken cancellationToken)
         {
-            var wizard = await _dbService.Wizard.Find(x => x.WizardId == request.ResponseDto.WizardId).FirstOrDefaultAsync(cancellationToken);
+            var wizard = await _dbService.Wizard.Find(x => x.WizardId == request.Response.WizardId).FirstOrDefaultAsync(cancellationToken);
 
             if (wizard is null)
-                throw new Exception($"No matching Wizard with WizardId = {request.ResponseDto.WizardId}");
+                throw new Exception($"No matching Wizard with WizardId = {request.Response.WizardId}");
+
+            bool alreadyResponded = await ResponseWithMatchingIdentifiersExist(request.Response, wizard, cancellationToken);
+
+            if (alreadyResponded)
+                throw new Exception("You have already participated in this wizard.");
 
             List<Models.Field> allFields = wizard.screens.SelectMany(s => s.fields).ToList();
 
             foreach (var field in allFields)
             {
-                var responseToField = request.ResponseDto.ResponseFields.Find(rf => rf.FieldId.Equals(field));
+                var responseToField = request.Response.ResponseFields.Find(rf => rf.FieldId.Equals(field));
 
                 if (responseToField is null)
                     throw new Exception($"No response was given for field with name {field.name}");
@@ -35,10 +40,38 @@ namespace perfect_wizard.Application.Handlers.Commands
                 ValidateResponse(field, responseToField);
             }
 
-            var response = _mapper.Map<Response>(request.ResponseDto);
+            var response = _mapper.Map<Response>(request.Response);
 
             await _dbService.Response.InsertOneAsync(response, new InsertOneOptions { }, cancellationToken);
         }
+
+        private async Task<bool> ResponseWithMatchingIdentifiersExist(DTOs.ResponseDto response, Models.Wizard wizard, CancellationToken cancellationToken)
+        {
+            List<Models.Field> identifierFields = wizard.screens
+                .SelectMany(s => s.fields)
+                .Where(f => f.isIdentifier)
+                .ToList();
+
+            var allResponseFields = await _dbService.Response
+                .Find(x => x.WizardId == wizard.WizardId)
+                .ToListAsync(cancellationToken);
+
+            var allIdentifierResponseFields = allResponseFields
+                .Map(x => x.responseFields)
+                .Where(f => identifierFields.Where(f => f.FieldId.Equals(f.FieldId)).Any())
+                .Map(f => TurnIdentifiersIntoOne(f.Map(x => x.values[0])))
+                .ToList();
+
+            var identifierResponseFields = response.ResponseFields
+                .Where(f => identifierFields.Where(f => f.FieldId.Equals(f.FieldId)).Any())
+                .ToList();
+
+            string currentResponseIdentifier = TurnIdentifiersIntoOne(identifierResponseFields.Map(x => x.Values[0]));
+
+            return allIdentifierResponseFields.Contains(currentResponseIdentifier);
+        }
+
+        private static string TurnIdentifiersIntoOne(List<string> identifiers) => string.Join('-', identifiers);
 
         private static void ValidateResponse(Models.Field field, DTOs.ResponseField responseToField)
         {

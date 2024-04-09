@@ -4,6 +4,6 @@ namespace perfect_wizard.Application.Commands
 {
     public class SendWizardCommand: IRequest
     {
-        public DTOs.ResponseDto ResponseDto { get; set; }
+        public DTOs.ResponseDto Response { get; set; }
     }
 }

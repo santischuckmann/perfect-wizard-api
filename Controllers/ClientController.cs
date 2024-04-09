@@ -22,12 +22,12 @@ namespace perfect_wizard.Controllers
             return Ok(result);
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> SendWizard([FromBody] Application.DTOs.)
-        //{
-        //    var result = await _mediator.Send(new Application.Queries.GetWizardQuery() { WizardId = wizardId });
+        [HttpPost]
+        public IActionResult SendWizard([FromBody] Application.DTOs.ResponseDto responseDto)
+        {
+            var result = _mediator.Send(new Application.Commands.SendWizardCommand() { Response = responseDto });
 
-        //    return Ok(result);
-        //}
+            return Ok(result);
+        }
     }
 }

@@ -33,7 +33,7 @@ namespace perfect_wizard.Application.Handlers.Commands
                     Builders<Models.User>.Filter.Eq(u => u.username, request.User.Identifier),
                     Builders<Models.User>.Filter.Eq(u => u.email, request.User.Identifier)
                 )
-            ).FirstOrDefaultAsync();
+            ).FirstOrDefaultAsync(cancellationToken);
 
             if (user is null) throw new Exception($"User with given " +
                 $"{(IsIdentifierAnEmail(request.User.Identifier) ? "email" : "username")} is not registered");
@@ -90,7 +90,7 @@ namespace perfect_wizard.Application.Handlers.Commands
             string hashed = Hash(password);
 
             if (hash != hashed)
-                throw new Exception("Usuario y / o contraseña incorrecto / s");
+                throw new Exception("Incorrect password");
 
             return true;
         }
