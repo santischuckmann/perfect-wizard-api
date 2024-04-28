@@ -20,7 +20,7 @@ namespace perfect_wizard.Models
     {
         public string FieldId { get; set; }
         public string label { get; set; }
-        public string placeholder { get; set; }
+        public string placeholder { get; set; } 
         public List<Option> options { get; set; }
         public string name { get; set; }
         public string type { get; set; }
