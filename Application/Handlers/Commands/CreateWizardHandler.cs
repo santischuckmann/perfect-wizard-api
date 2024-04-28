@@ -2,6 +2,7 @@
 using MediatR;
 using MongoDB.Driver;
 using perfect_wizard.Application.Commands;
+using perfect_wizard.Application.DTOs;
 using perfect_wizard.Models;
 
 namespace perfect_wizard.Application.Handlers.Commands
@@ -26,10 +27,18 @@ namespace perfect_wizard.Application.Handlers.Commands
             request.Wizard.WizardId = wizardId;
 
             Wizard wizard = _mapper.Map<Wizard>(request.Wizard);
+            PrepareFields(wizard);
 
             await _dbService.Wizard.InsertOneAsync(wizard, new InsertOneOptions { }, cancellationToken);
 
             return wizardId;
+        }
+
+        private static void PrepareFields(Wizard wizard)
+        {
+            foreach (var screen in wizard.screens)
+                foreach (var field in screen.fields)
+                    field.FieldId = Guid.NewGuid().ToString();
         }
 
         private static void ValidateField(DTOs.FieldDto field)

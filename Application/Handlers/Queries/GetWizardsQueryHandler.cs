@@ -22,7 +22,6 @@ namespace perfect_wizard.Application.Handlers.Queries
             {
                 var wizardDto = new MinifiedWizardDto()
                 {
-                    Color = wizard.color,
                     TenantId = wizard.tenantId,
                     Title = wizard.title,
                     WizardId = wizard.WizardId

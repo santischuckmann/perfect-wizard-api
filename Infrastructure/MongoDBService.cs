@@ -15,6 +15,9 @@ namespace perfect_wizard.Infrastructure
             var database = client.GetDatabase(configuration.GetConnectionString("database_name"));
 
             Wizard = database.GetCollection<Wizard>("wizard");
+            Response = database.GetCollection<Response>("response");
+            Tenant = database.GetCollection<Tenant>("tenant");
+            User = database.GetCollection<User>("user");
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
 using MongoDB.Driver;
-using perfect_wizard.Application.Commands;
+using perfect_wizard.Application.Commands.Client;
 using perfect_wizard.Models;
 using ServiceStack;
 

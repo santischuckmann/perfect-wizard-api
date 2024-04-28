@@ -11,11 +11,23 @@ namespace perfect_wizard.Controllers.Dashboard
         {
             _mediator = mediator;
         }
-        public async Task<IActionResult> CreateTenant([FromBody] Application.DTOs.WizardDto wizard)
+        [HttpPost]
+        public async Task<IActionResult> CreateTenant([FromBody] Application.DTOs.TenantDto tenant)
         {
-            string wizardId = await _mediator.Send(new Application.Commands.CreateWizardCommand() { Wizard = wizard });
+            string tenantId = await _mediator.Send(new Application.Commands.CreateTenantCommand() { 
+                Tenant = tenant,
+                UserId = UserId
+            });
 
-            return Ok(wizardId);
+            return Ok(tenantId);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetTenants()
+        {
+            var tenants = await _mediator.Send(new Application.Queries.GetTenantsQuery() { UserId = UserId });
+
+            return Ok(tenants);
         }
     }
 }

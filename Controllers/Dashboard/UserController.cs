@@ -12,12 +12,14 @@ namespace perfect_wizard.Controllers.Dashboard
         {
             _mediator = mediator;
         }
+        [HttpPost]
         public async Task<IActionResult> CreateUser([FromBody] Application.DTOs.UserDto user)
         {
             await _mediator.Send(new Application.Commands.CreateUserCommand() { User = user });
 
             return Ok();
         }
+        [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] Application.DTOs.LoginUserDto user)
         {
             var result = await _mediator.Send(new Application.Commands.LoginCommand() { User = user });

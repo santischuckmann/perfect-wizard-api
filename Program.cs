@@ -11,6 +11,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddJWTAuthentication(builder.Configuration);
 
 var app = builder.Build();
 
@@ -27,6 +28,8 @@ app.UseCors(builder =>
     builder.AllowAnyMethod();
     builder.AllowAnyHeader();
 });
+
+app.UseAuthentication();
 
 //app.UseResponseMiddleware();
 

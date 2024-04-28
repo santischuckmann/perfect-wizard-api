@@ -6,7 +6,6 @@ namespace perfect_wizard.Application.DTOs
     public class WizardDto
     {
         public string WizardId { get; set; }
-        public string Color { get; set; }
         public string Title { get; set; }
         public string TenantId { get; set; }
         public List<ScreenDto> Screens { get; set; }
@@ -18,8 +17,7 @@ namespace perfect_wizard.Application.DTOs
     }
     public class FieldDto
     {
-        public string FieldId { get; set; }
-        public string FieldType { get; set; }
+        public string? FieldId { get; set; }
         public string Label { get; set; }
         public string Placeholder { get; set; }
         public List<Option> Options { get; set; }

@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using MediatR;
-using MongoDB.Driver;
 using perfect_wizard.Application.Commands;
 using perfect_wizard.Models;
 
@@ -17,7 +16,13 @@ namespace perfect_wizard.Application.Handlers.Commands
         }
         public async Task<string> Handle(CreateTenantCommand request, CancellationToken cancellationToken)
         {
-            return "hola";
+            string tenantId = Guid.NewGuid().ToString();
+
+            Tenant tenant = _mapper.Map<Tenant>(request.Tenant);
+
+            await _dbService.Tenant.InsertOneAsync(tenant, new MongoDB.Driver.InsertOneOptions { }, cancellationToken);
+
+            return tenantId;
         }
     }
 }

@@ -27,6 +27,7 @@ namespace perfect_wizard.Application.Handlers.Commands
             IsValidUser(request.User);
 
             Models.User user = _mapper.Map<User>(request.User);
+            user.password = Utils.Hash(user.password);
 
             await _dbService.User.InsertOneAsync(user, new MongoDB.Driver.InsertOneOptions { }, cancellationToken);
         }

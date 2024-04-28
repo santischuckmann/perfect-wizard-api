@@ -1,10 +1,9 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using MongoDB.Driver;
 
 namespace perfect_wizard.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/client")]
     [ApiController]
     public class ClientController: ControllerBase
     {
@@ -21,11 +20,18 @@ namespace perfect_wizard.Controllers
 
             return Ok(result);
         }
+        //[HttpPost("{wizardId}")]
+        //public async Task<IActionResult> GetWizard(string wizardId)
+        //{
+        //    var result = await _mediator.Send(new Application.Queries.Client.GetWizardQuery() { WizardId = wizardId });
+
+        //    return Ok(result);
+        //}
 
         [HttpPost]
         public IActionResult SendWizard([FromBody] Application.DTOs.ResponseDto responseDto)
         {
-            var result = _mediator.Send(new Application.Commands.SendWizardCommand() { Response = responseDto });
+            var result = _mediator.Send(new Application.Commands.Client.SendWizardCommand() { Response = responseDto });
 
             return Ok(result);
         }
