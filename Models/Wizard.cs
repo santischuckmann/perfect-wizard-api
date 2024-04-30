@@ -27,7 +27,7 @@ namespace perfect_wizard.Models
         public bool isIdentifier { get; set; }
         public int minValuesRequired { get; set; }
         public int order { get; set; }
-        //public Description? description { get; set; }
+        public Description? description { get; set; }
         //public string[] dependsOn { get; set; }
         //public Dependency[] dependencies { get; set; }
     }

@@ -29,11 +29,11 @@ namespace perfect_wizard.Controllers
         //}
 
         [HttpPost]
-        public IActionResult SendWizard([FromBody] Application.DTOs.ResponseDto responseDto)
+        public async Task<IActionResult> SendWizard([FromBody] Application.DTOs.ResponseDto responseDto)
         {
-            var result = _mediator.Send(new Application.Commands.Client.SendWizardCommand() { Response = responseDto });
+           await _mediator.Send(new Application.Commands.Client.SendWizardCommand() { Response = responseDto });
 
-            return Ok(result);
+            return Ok(new EmptyResult());
         }
     }
 }

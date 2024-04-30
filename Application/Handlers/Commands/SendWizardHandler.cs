@@ -32,7 +32,7 @@ namespace perfect_wizard.Application.Handlers.Commands
 
             foreach (var field in allFields)
             {
-                var responseToField = request.Response.ResponseFields.Find(rf => rf.FieldId.Equals(field));
+                var responseToField = request.Response.ResponseFields.Find(rf => rf.FieldId.Equals(field.FieldId));
 
                 if (responseToField is null)
                     throw new Exception($"No response was given for field with name {field.name}");
@@ -73,13 +73,13 @@ namespace perfect_wizard.Application.Handlers.Commands
 
         private static string TurnIdentifiersIntoOne(List<string> identifiers) => string.Join('-', identifiers);
 
-        private static void ValidateResponse(Models.Field field, DTOs.ResponseField responseToField)
+        private static void ValidateResponse(Models.Field field, DTOs.ResponseFieldDto responseToField)
         {
             if (field.minValuesRequired == 1 && responseToField.Values.Length == 0)
                 throw new Exception($"Required field {field.name} was not completed");
 
             if ((field.type == FieldType.Options || field.type == FieldType.Multiple) &&
-                field.options.Where(x => responseToField.Values.Contains(x.id)).Any())
+                !field.options.Where(x => responseToField.Values.Contains(x.id)).Any())
                 throw new Exception($"Value in field: {field.name} is not an option");
 
             if (field.type == FieldType.Multiple && field.minValuesRequired != responseToField.Values.Length)

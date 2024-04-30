@@ -11,6 +11,7 @@ namespace perfect_wizard.Infrastructure.Mapper
             CreateMap<Application.DTOs.FieldDto, Models.Field>().ReverseMap();
 
             CreateMap<Application.DTOs.ResponseDto, Models.Response>().ReverseMap();
+            CreateMap<Application.DTOs.ResponseFieldDto, Models.ResponseField>().ReverseMap();
 
             CreateMap<Application.DTOs.UserDto, Models.User>().ReverseMap();
 
