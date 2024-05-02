@@ -4,6 +4,7 @@ using MongoDB.Driver;
 using perfect_wizard.Application.Commands.Client;
 using perfect_wizard.Models;
 using ServiceStack;
+using System.Linq;
 
 namespace perfect_wizard.Application.Handlers.Commands
 {
@@ -23,7 +24,9 @@ namespace perfect_wizard.Application.Handlers.Commands
             if (wizard is null)
                 throw new Exception($"No matching Wizard with WizardId = {request.Response.WizardId}");
 
-            bool alreadyResponded = await ResponseWithMatchingIdentifiersExist(request.Response, wizard, cancellationToken);
+            string[] identifier = GetIdentifiers(request.Response, wizard);
+
+            bool alreadyResponded = await ResponseWithMatchingIdentifiersExist(identifier, wizard, cancellationToken);
 
             if (alreadyResponded)
                 throw new Exception("You have already participated in this wizard.");
@@ -45,33 +48,31 @@ namespace perfect_wizard.Application.Handlers.Commands
             await _dbService.Response.InsertOneAsync(response, new InsertOneOptions { }, cancellationToken);
         }
 
-        private async Task<bool> ResponseWithMatchingIdentifiersExist(DTOs.ResponseDto response, Models.Wizard wizard, CancellationToken cancellationToken)
+        private string[] GetIdentifiers(DTOs.ResponseDto response, Models.Wizard wizard)
         {
             List<Models.Field> identifierFields = wizard.screens
                 .SelectMany(s => s.fields)
                 .Where(f => f.isIdentifier)
                 .ToList();
 
-            var allResponseFields = await _dbService.Response
+            return response.ResponseFields
+                .Where(x => identifierFields.Where(f => f.FieldId.Equals(x.FieldId)).Any())
+                .Map(x => x.Values[0])
+                .ToArray();
+        }
+
+        private async Task<bool> ResponseWithMatchingIdentifiersExist(string[] identifier, Models.Wizard wizard, CancellationToken cancellationToken)
+        {
+            var allResponses = await _dbService.Response
                 .Find(x => x.WizardId == wizard.WizardId)
                 .ToListAsync(cancellationToken);
 
-            var allIdentifierResponseFields = allResponseFields
-                .Map(x => x.responseFields)
-                .Where(f => identifierFields.Where(f => f.FieldId.Equals(f.FieldId)).Any())
-                .Map(f => TurnIdentifiersIntoOne(f.Map(x => x.values[0])))
-                .ToList();
+            var identifiers = allResponses.Map(x => TurnIdentifiersIntoOne(x.identifier));
 
-            var identifierResponseFields = response.ResponseFields
-                .Where(f => identifierFields.Where(f => f.FieldId.Equals(f.FieldId)).Any())
-                .ToList();
-
-            string currentResponseIdentifier = TurnIdentifiersIntoOne(identifierResponseFields.Map(x => x.Values[0]));
-
-            return allIdentifierResponseFields.Contains(currentResponseIdentifier);
+            return identifiers.Contains(TurnIdentifiersIntoOne(identifier));
         }
 
-        private static string TurnIdentifiersIntoOne(List<string> identifiers) => string.Join('-', identifiers);
+        private static string TurnIdentifiersIntoOne(string[] identifiers) => string.Join('-', identifiers);
 
         private static void ValidateResponse(Models.Field field, DTOs.ResponseFieldDto responseToField)
         {
