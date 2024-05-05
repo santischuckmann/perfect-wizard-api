@@ -20,13 +20,6 @@ namespace perfect_wizard.Controllers
 
             return Ok(result);
         }
-        //[HttpPost("{wizardId}")]
-        //public async Task<IActionResult> GetWizard(string wizardId)
-        //{
-        //    var result = await _mediator.Send(new Application.Queries.Client.GetWizardQuery() { WizardId = wizardId });
-
-        //    return Ok(result);
-        //}
 
         [HttpPost]
         public async Task<IActionResult> SendWizard([FromBody] Application.DTOs.ResponseDto responseDto)

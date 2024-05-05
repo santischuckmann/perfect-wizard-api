@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Azure.Core;
 using MediatR;
 using MongoDB.Driver;
 using perfect_wizard.Application.Commands;
@@ -18,10 +19,7 @@ namespace perfect_wizard.Application.Handlers.Commands
         }
         public async Task<string> Handle(CreateWizardCommand request, CancellationToken cancellationToken)
         {
-            List<DTOs.FieldDto> allFields = request.Wizard.Screens.SelectMany(s => s.Fields).ToList();
-
-            foreach (var field in allFields)
-                ValidateField(field);
+            ValidateFields(request.Wizard.Screens);
 
             string wizardId = Guid.NewGuid().ToString();
             request.Wizard.WizardId = wizardId;
@@ -41,14 +39,23 @@ namespace perfect_wizard.Application.Handlers.Commands
                     field.FieldId = Guid.NewGuid().ToString();
         }
 
-        private static void ValidateField(DTOs.FieldDto field)
+        private static void ValidateFields(List<ScreenDto> screens)
         {
-            if (field.MinValuesRequired == 0 && field.IsIdentifier)
-                throw new Exception($"An identifier field must be required");
+            List<DTOs.FieldDto> allFields = screens.SelectMany(s => s.Fields).ToList();
 
-            if ((field.Type == FieldType.Options || field.Type == FieldType.Multiple) &&
-                field.Options.Count == 0)
-                throw new Exception($"Field of type OPTIONS or MULTIPLE must have at least one option");
+            if (!allFields.Where(x => x.IsIdentifier).Any())
+                throw new Exception("At least one identifier field is required");
+
+            foreach (var field in allFields)
+            {
+                if (field.MinValuesRequired == 0 && field.IsIdentifier)
+                    throw new Exception("An identifier field must be required");
+
+                if ((field.Type == FieldType.Options || field.Type == FieldType.Multiple || field.Type == FieldType.Radio) &&
+                    field.Options.Count == 0)
+                    throw new Exception("Field of type OPTIONS or MULTIPLE must have at least one option");
+
+            }
         }
     }
 }

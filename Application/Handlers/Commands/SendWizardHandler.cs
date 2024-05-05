@@ -44,6 +44,7 @@ namespace perfect_wizard.Application.Handlers.Commands
             }
 
             var response = _mapper.Map<Response>(request.Response);
+            response.identifier = identifier;
 
             await _dbService.Response.InsertOneAsync(response, new InsertOneOptions { }, cancellationToken);
         }

@@ -29,5 +29,14 @@ namespace perfect_wizard.Controllers.Dashboard
 
             return Ok(tenants);
         }
+
+        [HttpGet("{tenantId}")]
+        public async Task<IActionResult> GetTenants(string tenantId)
+        {
+            var tenant = await _mediator.Send(new Application.Queries.GetTenantQuery() { TenantId = tenantId });
+
+            return Ok(tenant);
+        }
+
     }
 }
