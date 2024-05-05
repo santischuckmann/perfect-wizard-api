@@ -19,43 +19,40 @@ namespace perfect_wizard.Application.Handlers.Commands
         }
         public async Task<string> Handle(CreateWizardCommand request, CancellationToken cancellationToken)
         {
-            ValidateFields(request.Wizard.Screens);
-
             string wizardId = Guid.NewGuid().ToString();
-            request.Wizard.WizardId = wizardId;
 
-            Wizard wizard = _mapper.Map<Wizard>(request.Wizard);
-            PrepareFields(wizard);
+            Wizard wizard = new()
+            {
+               tenantId = request.TenantId,
+               WizardId = wizardId
+            };
+            FillInitialFields(wizard);
 
             await _dbService.Wizard.InsertOneAsync(wizard, new InsertOneOptions { }, cancellationToken);
 
             return wizardId;
         }
 
-        private static void PrepareFields(Wizard wizard)
+        private void FillInitialFields(Wizard wizard)
         {
-            foreach (var screen in wizard.screens)
-                foreach (var field in screen.fields)
-                    field.FieldId = Guid.NewGuid().ToString();
-        }
-
-        private static void ValidateFields(List<ScreenDto> screens)
-        {
-            List<DTOs.FieldDto> allFields = screens.SelectMany(s => s.Fields).ToList();
-
-            if (!allFields.Where(x => x.IsIdentifier).Any())
-                throw new Exception("At least one identifier field is required");
-
-            foreach (var field in allFields)
+            wizard.screens.Add(new Screen
             {
-                if (field.MinValuesRequired == 0 && field.IsIdentifier)
-                    throw new Exception("An identifier field must be required");
+                stepName = "My first step",
+            });
 
-                if ((field.Type == FieldType.Options || field.Type == FieldType.Multiple || field.Type == FieldType.Radio) &&
-                    field.Options.Count == 0)
-                    throw new Exception("Field of type OPTIONS or MULTIPLE must have at least one option");
-
-            }
+            wizard.screens[0].fields.Add(new Field
+            {
+                name = "name",
+                description = new Description() { text = "Description (optional)", position = "above" },
+                FieldId = Guid.NewGuid().ToString(),
+                isIdentifier = true,
+                label = "What is your name?",
+                minValuesRequired = 1,
+                options = new(),
+                order = 1,
+                placeholder = "John Doe",
+                type = FieldType.Text
+            });
         }
     }
 }

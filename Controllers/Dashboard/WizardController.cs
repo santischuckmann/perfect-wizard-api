@@ -14,11 +14,19 @@ namespace perfect_wizard.Controllers.Dashboard
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateWizard([FromBody] Application.DTOs.WizardDto wizard)
+        public async Task<IActionResult> CreateWizard(string tenantId)
         {
-            string wizardId = await _mediator.Send(new Application.Commands.CreateWizardCommand() { Wizard = wizard });
+            string wizardId = await _mediator.Send(new Application.Commands.CreateWizardCommand() { TenantId = tenantId });
 
             return Ok(wizardId);
+        }
+
+        [HttpPost("update")]
+        public async Task<IActionResult> UpdateWizard([FromBody] Application.DTOs.WizardDto wizard)
+        {
+            await _mediator.Send(new Application.Commands.UpdateWizardCommand() { Wizard = wizard });
+
+            return Ok(new EmptyResult());
         }
 
         [HttpGet]

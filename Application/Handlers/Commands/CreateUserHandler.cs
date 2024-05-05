@@ -32,7 +32,7 @@ namespace perfect_wizard.Application.Handlers.Commands
             await _dbService.User.InsertOneAsync(user, new MongoDB.Driver.InsertOneOptions { }, cancellationToken);
         }
 
-        private static void IsValidUser(DTOs.UserDto user)
+        private static void IsValidUser(DTOs.UserDtoCreation user)
         {
             if (user.Password.IsNullOrEmpty())
                 throw new Exception("Password cannot be empty");

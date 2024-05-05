@@ -19,6 +19,8 @@ namespace perfect_wizard.Application.Handlers.Commands
             string tenantId = Guid.NewGuid().ToString();
 
             Tenant tenant = _mapper.Map<Tenant>(request.Tenant);
+            tenant.TenantId = tenantId;
+            tenant.UserId = request.UserId;
 
             await _dbService.Tenant.InsertOneAsync(tenant, new MongoDB.Driver.InsertOneOptions { }, cancellationToken);
 

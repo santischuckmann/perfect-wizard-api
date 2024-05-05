@@ -15,6 +15,8 @@ namespace perfect_wizard.Infrastructure.Mapper
 
             CreateMap<Application.DTOs.UserDto, Models.User>().ReverseMap();
 
+            CreateMap<Application.DTOs.UserDtoCreation, Models.User>().ReverseMap();
+
             CreateMap<Application.DTOs.TenantDto, Models.Tenant>().ReverseMap();
         }
     }
